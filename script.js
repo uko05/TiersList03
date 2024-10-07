@@ -1,6 +1,7 @@
 const imageFolder = 'chara/';
 const imageData = [
     { src: 'syu1.png', category: 'butsuri' },
+    { src: 'sei1.png', category: 'butsuri' },
     { src: 'unri.png', category: 'butsuri' },
     { src: 'boothill.png', category: 'butsuri' },
     { src: 'robin.png', category: 'butsuri' },
@@ -11,6 +12,7 @@ const imageData = [
     { src: 'kurara.png', category: 'butsuri' },
     { src: 'natasya.png', category: 'butsuri' },
     { src: 'syu2.png', category: 'hi' },
+    { src: 'sei2.png', category: 'hi' },
     { src: 'reisa.png', category: 'hi' },
     { src: 'syokyu.png', category: 'hi' },
     { src: 'hotaru.png', category: 'hi' },
@@ -45,6 +47,7 @@ const imageData = [
     { src: 'aran.png', category: 'kaminari' },
     { src: 'ranpa.png', category: 'kyosuu' },
     { src: 'syu3.png', category: 'kyosuu' },
+    { src: 'sei3.png', category: 'kyosuu' },
     { src: 'aben.png', category: 'kyosuu' },
     { src: 'reisio.png', category: 'kyosuu' },
     { src: 'nanoka2.png', category: 'kyosuu' },
