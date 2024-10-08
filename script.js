@@ -45,6 +45,7 @@ const imageData = [
     { src: 'teiun.png', category: 'kaminari' },
     { src: 'sebaru.png', category: 'kaminari' },
     { src: 'aran.png', category: 'kaminari' },
+    { src: 'sunday.png', category: 'kyosuu' },
     { src: 'ranpa.png', category: 'kyosuu' },
     { src: 'syu3.png', category: 'kyosuu' },
     { src: 'sei3.png', category: 'kyosuu' },
