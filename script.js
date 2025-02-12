@@ -34,6 +34,7 @@ const imageData = [
     { src: 'jepado.png', category: 'koori' },
     { src: 'helta.png', category: 'koori' },
     { src: 'nanoka.png', category: 'koori' },    
+    { src: 'anaikusu.png', category: 'kaze' },
     { src: 'hisyo.png', category: 'kaze' },
     { src: 'swan.png', category: 'kaze' },
     { src: 'fofo.png', category: 'kaze' },
