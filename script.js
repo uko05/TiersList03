@@ -64,6 +64,7 @@ const imageData = [
     { src: 'ingetsu.png', category: 'kyosuu' },
     { src: 'gyoku.png', category: 'kyosuu' },
     { src: 'rasetu.png', category: 'kyosuu' },
+    { src: 'saferu.png', category: 'ryoushi' },
     { src: 'kyasuto.png', category: 'ryoushi' },
     { src: 'toribi.png', category: 'ryoushi' },
     { src: 'jeido.png', category: 'ryoushi' },
