@@ -364,9 +364,6 @@ header {
         grid-template-columns: repeat(7, minmax(100px, 1fr)); /* 各列を100px固定 */
         overflow-x: auto; /* 横スクロールを有効化 */
         justify-content: start; /* スクロール位置を左に固定 */
-    }
-
-    .container {
         padding: 10px 5px 5px 5px;
     }
     
