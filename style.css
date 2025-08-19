@@ -207,7 +207,7 @@ header {
 .image-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
     justify-content: flex-start; /* 画像を左寄せにする */
 }
 
@@ -253,7 +253,7 @@ header {
 .tab-wrap {
     display: flex;
     flex-wrap: wrap;
-    width: 850px; /* 上部の表（grid）の幅に合わせる */
+    width: 720px; /* 上部の表（grid）の幅に合わせる */
     margin: 5px auto; /* 中央寄せ */
 }
 
@@ -358,23 +358,23 @@ header {
     padding: 3px; /* 幅を広くするためのパディング */
 }
 
-/* スマホの縦画面表示に対応 */
-@media only screen and (max-width: 768px) {
+/* スマホの縦画面表示に対応 768px */
+@media only screen and (max-width: 932px) {
     .container {
-        display: grid;
         grid-template-columns: repeat(7, minmax(100px, 1fr)); /* 各列を100px固定 */
-        gap: 5px; /* 少し隙間をあける */
-        padding: 10px;
-        max-width: 100%; /* コンテナの幅を画面に合わせる */
         overflow-x: auto; /* 横スクロールを有効化 */
         justify-content: start; /* スクロール位置を左に固定 */
     }
 
-    .cell {
-        width: 100%;
-        height: auto; /* 高さを自動調整 */
-        border-radius: 5px; /* 角を少し丸める */
+    .container {
+        padding: 10px 5px 5px 5px;
     }
+    
+    // .cell {
+    //     width: 100%;
+    //     height: auto; /* 高さを自動調整 */
+    //     border-radius: 5px; /* 角を少し丸める */
+    // }
 
     .tabs {
         flex-direction: column; /* タブを縦並びに */

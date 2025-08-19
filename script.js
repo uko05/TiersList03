@@ -367,31 +367,90 @@ function loadImages() {
     }
 }
 
-function saveImage() {
-    html2canvas(document.getElementById('grid'), { 
-        useCORS: true, 
-        scale: 2 // スケールを調整して解像度を上げる
-    }).then(canvas => {
-        canvas.toBlob(function(blob) {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            
-            // 現在の日時を「yyyyMMdd_HHmmss」形式にフォーマット
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0'); // 月は0から始まるので+1
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
+// function saveImage() {
+//     html2canvas(document.getElementById('grid'), { 
+//         useCORS: true, 
+//         scale: 2 // スケールを調整して解像度を上げる
+//     }).then(canvas => {
+//         canvas.toBlob(function(blob) {
+//             const link = document.createElement('a');
+//             link.href = URL.createObjectURL(blob);
+//             
+//             // 現在の日時を「yyyyMMdd_HHmmss」形式にフォーマット
+//             const now = new Date();
+//             const year = now.getFullYear();
+//             const month = String(now.getMonth() + 1).padStart(2, '0'); // 月は0から始まるので+1
+//             const day = String(now.getDate()).padStart(2, '0');
+//             const hours = String(now.getHours()).padStart(2, '0');
+//             const minutes = String(now.getMinutes()).padStart(2, '0');
+//             const seconds = String(now.getSeconds()).padStart(2, '0');
+// 
+//             const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
+//             link.download = `スタレ推しキャラランキング_属性_${formattedDate}.png`; // ファイル名の変更
+//             
+//             link.click();
+//         }, 'image/png');
+//     }).catch(error => {
+//         console.error('Error capturing image:', error);
+//     });
+// }
 
-            const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
-            link.download = `スタレ推しキャラランキング_属性_${formattedDate}.png`; // ファイル名の変更
-            
-            link.click();
-        }, 'image/png');
-    }).catch(error => {
-        console.error('Error capturing image:', error);
+function saveImage() {
+  const grid = document.getElementById('grid');
+  if (!grid) return;
+
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 0;
+
+  html2canvas(grid, { useCORS: true, scale: 2 })
+    .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/png')))
+    .then(async (blob) => {
+      if (!blob) throw new Error('Blob 作成に失敗');
+
+      // ファイル名（yyyyMMdd_HHmmss）
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mi = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      const filename = `スタレ推しキャラランキング_属性_${yyyy}${mm}${dd}_${hh}${mi}${ss}.png`;
+
+      // ---- モバイル優先ロジック ----
+      if (isMobile) {
+        try {
+          const file = new File([blob], filename, { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'スタレ推しキャラランキング_属性',
+              text: '写真アプリに保存してね'
+            });
+            return; // モバイルは共有シートで完了
+          }
+        } catch (e) {
+          console.warn('Share canceled/failed, fallback.', e);
+        }
+        // 共有できないモバイル → 新規タブで画像を開いて長押し保存
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 60 * 1000);
+        return;
+      }
+
+      // ---- PC(デスクトップ) は従来の「即ダウンロード」に固定 ----
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60 * 1000);
+    })
+    .catch(err => {
+      console.error('Error capturing image:', err);
+      alert('画像の保存に失敗しました。もう一度お試しください。');
     });
 }
 
