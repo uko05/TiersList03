@@ -454,5 +454,19 @@ function saveImage() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', loadImages);
+document.addEventListener('DOMContentLoaded', () => {
+    loadImages();
 
+    const sidebar = document.getElementById('sidebar');
+    const sizeOptions = document.querySelectorAll('input[name="size-option"]');
+
+    sizeOptions.forEach(option => {
+        option.addEventListener('change', (event) => {
+            if (event.target.value === 'default') {
+                sidebar.style.display = 'block';   // ← 左バー表示
+            } else if (event.target.value === 'hakai') {
+                sidebar.style.display = 'none';    // ← 左バー非表示
+            }
+        });
+    });
+});
