@@ -15,6 +15,7 @@ const imageData = [
     { src: 'susyo.png', category: 'butsuri' },
     { src: 'kurara.png', category: 'butsuri' },
     { src: 'natasya.png', category: 'butsuri' },
+    { src: 'hibana.png', category: 'hi' },
     { src: 'daria.png', category: 'hi' },
     { src: 'newteiun.png', category: 'hi' },
     { src: 'syu2.png', category: 'hi' },
