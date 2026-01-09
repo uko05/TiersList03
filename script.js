@@ -93,6 +93,67 @@ const SELECTED_LABEL = '☑';
 // タブごとの選択状態を管理するためのオブジェクト
 const tabSelections = {};
 
+const i18n = {
+  ja: {
+    title: "原神推しキャラランキング",
+    save: "Save Image",
+    default: "デフォルト",
+    hideLeft: "左バー消滅",
+    mobileHint: "※スマホの人は横画面推奨",
+    hi: "炎",
+    koori: "氷",
+    kaze: "風",
+    kaminari: "雷",
+    kyosuu: "虚数",
+    ryoushi: "量子",
+    butsuri: "物理",
+  },
+  en: {
+    title: "Genshin Oshi Character Ranking",
+    save: "Save Image",
+    default: "Default",
+    hideLeft: "Hide Left Bar",
+    mobileHint: "*For mobile, landscape mode recommended",
+    hi: "Fire",
+    koori: "Ice",
+    kaze: "Wind",
+    kaminari: "Lightning",
+    kyosuu: "Imaginary",
+    ryoushi: "Quantum",
+    butsuri: "Physical",
+  }
+};
+
+// ===== i18n適用 =====
+function applyLang(lang) {
+  const dict = i18n[lang] || i18n.ja;
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    if (dict[key] != null) el.textContent = dict[key];
+  });
+
+  // 言語を保存（次回も維持）
+  localStorage.setItem("lang", lang);
+}
+
+// ラジオボタンの監視
+function initLangSwitch() {
+  const saved = localStorage.getItem("lang") || "ja";
+  const radio = document.querySelector(`input[name="lang"][value="${saved}"]`);
+  if (radio) radio.checked = true;
+
+  // 初期適用
+  applyLang(saved);
+
+  // change適用（全ラジオに付与）
+  document.querySelectorAll('input[name="lang"]').forEach(r => {
+    r.addEventListener("change", (e) => {
+      applyLang(e.target.value);
+    });
+  });
+}
+
 //------------------------------------------------------------------------------------------------
 const toggleButton = document.getElementById('toggle-button');
 const sidebar = document.getElementById('sidebar');
@@ -371,34 +432,6 @@ function loadImages() {
     }
 }
 
-// function saveImage() {
-//     html2canvas(document.getElementById('grid'), { 
-//         useCORS: true, 
-//         scale: 2 // スケールを調整して解像度を上げる
-//     }).then(canvas => {
-//         canvas.toBlob(function(blob) {
-//             const link = document.createElement('a');
-//             link.href = URL.createObjectURL(blob);
-//             
-//             // 現在の日時を「yyyyMMdd_HHmmss」形式にフォーマット
-//             const now = new Date();
-//             const year = now.getFullYear();
-//             const month = String(now.getMonth() + 1).padStart(2, '0'); // 月は0から始まるので+1
-//             const day = String(now.getDate()).padStart(2, '0');
-//             const hours = String(now.getHours()).padStart(2, '0');
-//             const minutes = String(now.getMinutes()).padStart(2, '0');
-//             const seconds = String(now.getSeconds()).padStart(2, '0');
-// 
-//             const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
-//             link.download = `スタレ推しキャラランキング_属性_${formattedDate}.png`; // ファイル名の変更
-//             
-//             link.click();
-//         }, 'image/png');
-//     }).catch(error => {
-//         console.error('Error capturing image:', error);
-//     });
-// }
-
 function saveImage() {
   const grid = document.getElementById('grid');
   if (!grid) return;
@@ -459,7 +492,15 @@ function saveImage() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    initLangSwitch();
     loadImages();
+
+    // 画像生成などでDOMが増えた後に、現在の言語でもう一度適用
+    const currentLang =
+      document.querySelector('input[name="lang"]:checked')?.value ||
+      localStorage.getItem("lang") ||
+      "ja";
+    applyLang(currentLang);
 
     const sidebar = document.getElementById('sidebar');
     const sizeOptions = document.querySelectorAll('input[name="size-option"]');
