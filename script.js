@@ -109,7 +109,7 @@ const i18n = {
     butsuri: "物理",
   },
   en: {
-    title: "Honkai:StarRail Oshi Character Ranking",
+    title: "Honkai:StarRail Oshi Character Ranking【Element】",
     save: "Save Image",
     default: "Default",
     hideLeft: "Hide Left Bar",
