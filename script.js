@@ -95,7 +95,7 @@ const tabSelections = {};
 
 const i18n = {
   ja: {
-    title: "原神推しキャラランキング",
+    title: "スタレ推しキャラランキング【属性】",
     save: "Save Image",
     default: "デフォルト",
     hideLeft: "左バー消滅",
@@ -109,7 +109,7 @@ const i18n = {
     butsuri: "物理",
   },
   en: {
-    title: "Genshin Oshi Character Ranking",
+    title: "Honkai:StarRail Oshi Character Ranking",
     save: "Save Image",
     default: "Default",
     hideLeft: "Hide Left Bar",
