@@ -446,55 +446,12 @@ function saveImage() {
   const grid = document.getElementById('grid');
   if (!grid) return;
 
-  const isMobile =
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-    navigator.maxTouchPoints > 0;
-    
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 0;
+
   html2canvas(grid, { useCORS: true, scale: 2 })
     .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/png')))
     .then(async (blob) => {
       if (!blob) throw new Error('Blob 作成に失敗');
-
-      // ✅ ばかたれモードで保存した時だけ集計 & 連打対策
-      const modeC = document.getElementById('modeC');
-      const modeCEnabled = !!modeC?.checked;
-
-      if (modeCEnabled) {
-        const selectedImg = document.querySelector('.image-list .image-item.selected');
-
-        if (selectedImg?.dataset?.src) {
-          const filenameSrc = selectedImg.dataset.src;
-
-          // --- 同端末連打対策（ばかたれ時のみ） ---
-          // どれくらいで再カウントOKにするか（例：10分）
-          const COOLDOWN_MS = 60 * 60 * 1000;
-
-          // 「同キャラだけ」連打を止める（キャラ別クールダウン）
-          // 全キャラまとめて止めたいなら key を固定文字にしてOK:
-          // const key = 'bakatareLastSent';
-          const key = `bakatareLastSent`;
-
-          const last = Number(localStorage.getItem(key) || 0);
-          const nowMs = Date.now();
-
-          if (nowMs - last >= COOLDOWN_MS) {
-            try {
-              await incrementBakatareCount(filenameSrc);
-              localStorage.setItem(key, String(nowMs));
-            } catch (e) {
-              console.warn('ばかたれ集計: 失敗（保存は続行）', e);
-            }
-          } else {
-            console.log('ばかたれ集計: クールダウン中なので加算しない', {
-              filenameSrc,
-              remainingMs: COOLDOWN_MS - (nowMs - last)
-            });
-          }
-        } else {
-          console.warn('ばかたれ集計: 選択キャラが見つからない');
-        }
-      }
-      // ✅ modeCEnabled が false のときは、localStorageも集計も一切触らない
 
       // ファイル名（yyyyMMdd_HHmmss）
       const now = new Date();
