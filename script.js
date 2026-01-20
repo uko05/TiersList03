@@ -98,6 +98,32 @@ const imageData = [
 const MAX_SELECTION = 3;
 const SELECTED_LABEL = '☑';
 
+//------------------------------------------------------------------------------------------------
+const toggleButton = document.getElementById('toggle-button');
+const sidebar = document.getElementById('sidebar');
+const parentNode = document.querySelector('.parent-node');
+const childNodes = document.querySelector('.child-nodes');
+
+// 初期状態でサイドバーを隠す
+sidebar.classList.add('hidden');
+toggleButton.setAttribute('aria-expanded', false);
+toggleButton.setAttribute('aria-label', 'メニューを開く');
+
+toggleButton.addEventListener('click', () => {
+    sidebar.classList.toggle('hidden'); // hiddenクラスを切り替え
+    const isExpanded = !sidebar.classList.contains('hidden');
+    toggleButton.setAttribute('aria-expanded', isExpanded);
+    toggleButton.setAttribute('aria-label', isExpanded ? 'メニューを閉じる' : 'メニューを開く');
+});
+
+parentNode.addEventListener('click', (event) => {
+    event.preventDefault(); // デフォルトのリンク動作を防止
+    childNodes.classList.toggle('active'); // 子ノードの表示・非表示を切り替え
+    const isActive = childNodes.classList.contains('active');
+    parentNode.textContent = `${isActive ? '▼' : '▶'} 推しキャラランキング`; // テキストを更新
+});
+//------------------------------------------------------------------------------------------------
+
 // タブごとの選択状態を管理するためのオブジェクト
 const tabSelections = {};
 
@@ -164,36 +190,63 @@ function initLangSwitch() {
   });
 }
 
-//------------------------------------------------------------------------------------------------
-const toggleButton = document.getElementById('toggle-button');
-const sidebar = document.getElementById('sidebar');
-const parentNode = document.querySelector('.parent-node');
-const childNodes = document.querySelector('.child-nodes');
+// タブの選択状態を表示
+function updateTabSelectionsDisplay() {
+    const tabSelectionsElement = document.getElementById('tab-selections');
+    if (!tabSelectionsElement) return; // ★これ追加：要素が無ければ終了
+    
+    tabSelectionsElement.innerHTML = ''; // クリアしてから再描画
 
-// 初期状態でサイドバーを隠す
-sidebar.classList.add('hidden');
-toggleButton.setAttribute('aria-expanded', false);
-toggleButton.setAttribute('aria-label', 'メニューを開く');
-
-toggleButton.addEventListener('click', () => {
-    sidebar.classList.toggle('hidden'); // hiddenクラスを切り替え
-    const isExpanded = !sidebar.classList.contains('hidden');
-    toggleButton.setAttribute('aria-expanded', isExpanded);
-    toggleButton.setAttribute('aria-label', isExpanded ? 'メニューを閉じる' : 'メニューを開く');
-});
-
-parentNode.addEventListener('click', (event) => {
-    event.preventDefault(); // デフォルトのリンク動作を防止
-    childNodes.classList.toggle('active'); // 子ノードの表示・非表示を切り替え
-    const isActive = childNodes.classList.contains('active');
-    parentNode.textContent = `${isActive ? '▼' : '▶'} 推しキャラランキング`; // テキストを更新
-});
-//------------------------------------------------------------------------------------------------
+    // tabSelectionsが空でも問題ないように対策
+    if (tabSelections && Object.keys(tabSelections).length > 0) {
+        for (const [category, selections] of Object.entries(tabSelections)) {
+            const categoryInfo = document.createElement('div');
+            categoryInfo.textContent = `${category}: ${selections.join(', ')}`;
+            tabSelectionsElement.appendChild(categoryInfo);
+        }
+    } else {
+        tabSelectionsElement.textContent = 'No selections made yet.';
+    }
+}
 
 function loadImages() {
     const tabs = document.querySelectorAll('.tab-label');
     const tabContents = document.querySelectorAll('.tab-content');
     const cells = document.querySelectorAll('.cell');
+    const modeC = document.getElementById('modeC');
+    let modeCEnabled = false;
+
+    function clearAllTopCells() {
+        cells.forEach(cell => cell.innerHTML = '');
+    }
+
+    function clearAllListSelections() {
+        document.querySelectorAll('.image-item.selected').forEach(img => {
+            img.classList.remove('selected');
+            removeNumberingAndBorder(img.parentElement);
+        });
+    }
+
+    function clearAllSelectionsEverywhere() {
+        clearAllTopCells();
+        clearAllListSelections();
+        for (const key of Object.keys(tabSelections)) delete tabSelections[key];
+        updateTabSelectionsDisplay();
+    }
+
+    function fillAllCells(src) {
+        cells.forEach(cell => {
+            cell.innerHTML = `<img src="${imageFolder}${src}" class="selected">`;
+        });
+    }
+
+    // C切替：ONでもOFFでも必ず全クリア（復元なし）
+    if (modeC) {
+        modeC.addEventListener('change', () => {
+            modeCEnabled = modeC.checked;
+            clearAllSelectionsEverywhere();
+        });
+    }
 
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -211,7 +264,9 @@ function loadImages() {
             tabContents.forEach(content => {
                 if (content.previousElementSibling === tab) {
                     updateImageList(category, content.querySelector('.image-list'));
-                    restoreSelectionState(category); // 選択状態の復元
+                    if (!modeCEnabled) {
+                        restoreSelectionState(category); // 選択状態の復元
+                    }
                 }
             });
         });
@@ -242,6 +297,21 @@ function loadImages() {
 
     function handleImageClick(img, category) {
         const src = img.dataset.src;
+        
+        // --- Cモード：単一選択＆全セル埋め ---
+        if (modeCEnabled) {
+            // 前の選択は全部消す（自分で外す必要なし）
+            clearAllSelectionsEverywhere();
+
+            // 今クリックした1枚だけ選択表示
+            img.classList.add('selected');
+            addNumberingAndBorder(img.parentElement, 1);
+
+            // 全セルに同じキャラを表示
+            fillAllCells(src);
+            return; // ★ここで既存処理を完全に止める
+        }
+
         const columnMapping = {
             'hi': [0, 7, 14],
             'koori': [1, 8, 15],
@@ -386,6 +456,7 @@ function loadImages() {
             const cellIndex = positions[index];
             if (cellIndex !== undefined) {
                 console.log(`Placing image ${src} at position ${cellIndex}`);
+                cells[cellIndex].innerHTML = '';
                 cells[cellIndex].appendChild(img);
             }
         });
@@ -437,7 +508,7 @@ function loadImages() {
     if (saveButton) {
         saveButton.addEventListener('click', () => {
             const tabCategory = document.querySelector('.tab-label.active').dataset.category;
-            saveImage(tabCategory);
+            saveImage();
         });
     }
 }
