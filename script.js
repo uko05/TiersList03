@@ -543,7 +543,7 @@ function saveImage() {
           // 「同キャラだけ」連打を止める（キャラ別クールダウン）
           // 全キャラまとめて止めたいなら key を固定文字にしてOK:
           // const key = 'bakatareLastSent';
-          const key = `bakatareLastSent`;
+          const key = `bakatareLastSent03`;
 
           const last = Number(localStorage.getItem(key) || 0);
           const nowMs = Date.now();
