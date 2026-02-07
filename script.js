@@ -59,6 +59,7 @@ const imageData = [
     { src: 'buronya.png', category: 'kaze' },
     { src: 'tankou.png', category: 'kaze' },    
     
+    { src: 'sinazu.png', category: 'kaminari' },
     { src: 'aguraia.png', category: 'kaminari' },
     { src: 'yomi.png', category: 'kaminari' },
     { src: 'kahuka.png', category: 'kaminari' },
