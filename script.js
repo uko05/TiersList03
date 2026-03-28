@@ -1,6 +1,6 @@
 import { incrementBakatareCount } from './bakatareCount.js';
 
-const imageFolder = 'chara/';
+const imageFolder = 'https://cdn.jsdelivr.net/gh/uko05/99_SharedImage@main/02_Starrail/chara_icon/';
 const imageData = [
     { src: 'hiei.png', category: 'butsuri' },
     { src: 'koukou.png', category: 'butsuri' },
