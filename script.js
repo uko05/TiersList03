@@ -38,10 +38,13 @@ function initSavedImageUI() {
   const modal = document.getElementById('uko-saved-image-modal');
   const modalImg = document.getElementById('uko-saved-image-modal-img');
   const modalClose = document.getElementById('uko-saved-image-modal-close');
+  const arrowEl = document.getElementById('uko-saved-image-arrow');
   if (!toggle || !panel || !messageEl || !dateEl || !imgEl) return;
 
   toggle.addEventListener('click', () => {
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    const willOpen = panel.style.display === 'none';
+    panel.style.display = willOpen ? 'block' : 'none';
+    if (arrowEl) arrowEl.textContent = willOpen ? '▲' : '▼';
   });
 
   // サムネイルは元画像の30%サイズで表示する
