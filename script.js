@@ -1,4 +1,7 @@
 import { incrementBakatareCount } from './bakatareCount.js';
+import {
+  onAccountAuthState, saveProfileImage, getSavedProfileImage, formatSavedAt,
+} from 'https://uko05.github.io/24_AccountCenter/saved-image.js';
 
 import { starrailChars } from 'https://cdn.jsdelivr.net/gh/uko05/99_SharedImage@main/02_Starrail/chara_data/starrail_chars.js';
 
@@ -8,6 +11,36 @@ const imageData = starrailChars
     .map(c => ({ src: c.icon, category: c.element }));
 const MAX_SELECTION = 3;
 const SELECTED_LABEL = '☑';
+const SITE_ID = 'starrailRankingElement';
+let refreshSavedImageUI = () => {};
+
+// 「前回保存した画像を確認」トグルの初期化(アカウント登録者のみ表示)
+function initSavedImageUI() {
+  const wrap = document.getElementById('uko-saved-image-wrap');
+  const toggle = document.getElementById('uko-saved-image-toggle');
+  const panel = document.getElementById('uko-saved-image-panel');
+  const dateEl = document.getElementById('uko-saved-image-date');
+  const imgEl = document.getElementById('uko-saved-image-img');
+  if (!wrap || !toggle || !panel || !dateEl || !imgEl) return;
+
+  toggle.addEventListener('click', () => {
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  });
+
+  async function refresh() {
+    const entry = await getSavedProfileImage(SITE_ID);
+    if (entry) {
+      dateEl.textContent = formatSavedAt(entry.updatedAt);
+      imgEl.src = entry.url;
+      wrap.style.display = 'block';
+    } else {
+      wrap.style.display = 'none';
+      panel.style.display = 'none';
+    }
+  }
+  refreshSavedImageUI = refresh;
+  onAccountAuthState(() => { refresh(); });
+}
 
 //------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------
@@ -23,6 +56,7 @@ const i18n = {
     hideLeft: "左バー消滅",
     bakatare: "ばかたれモード",
     mobileHint: "※スマホの人は横画面推奨",
+    savedImageToggle: "前回保存した画像を確認",
     hi: "炎",
     koori: "氷",
     kaze: "風",
@@ -38,6 +72,7 @@ const i18n = {
     hideLeft: "Hide Left Bar",
     bakatare: "Bakatare Mode",
     mobileHint: "*For mobile, landscape mode recommended",
+    savedImageToggle: "Check last saved image",
     hi: "Fire",
     koori: "Ice",
     kaze: "Wind",
@@ -414,6 +449,9 @@ function saveImage() {
     .then(async (blob) => {
       if (!blob) throw new Error('Blob 作成に失敗');
 
+      // アカウント登録者ならクラウドにも保存(失敗しても無視、ローカル保存は継続)
+      saveProfileImage(SITE_ID, blob).then(() => refreshSavedImageUI());
+
       // ✅ ばかたれモードで保存した時だけ集計 & 連打対策
       const modeC = document.getElementById('modeC');
       const modeCEnabled = !!modeC?.checked;
@@ -505,6 +543,7 @@ function saveImage() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initLangSwitch();
+    initSavedImageUI();
     loadImages();
 
     // 画像生成などでDOMが増えた後に、現在の言語でもう一度適用

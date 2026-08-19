@@ -31,6 +31,7 @@
     <script type="module" src="./script.js" defer></script>
 </head>
 <body>
+    <span id="uko-account-status-slot"></span>
     <div class="lang-switch">
       <label><input type="radio" name="lang" value="ja" checked> 日本語</label>
       <label><input type="radio" name="lang" value="en"> English</label>
@@ -47,6 +48,14 @@
             <br>
 
             <span data-i18n="mobileHint">※スマホの人は横画面推奨</span>
+
+            <div class="uko-saved-image-wrap" id="uko-saved-image-wrap" style="display:none;">
+              <button type="button" class="uko-saved-image-toggle" id="uko-saved-image-toggle" data-i18n="savedImageToggle">前回保存した画像を確認</button>
+              <div class="uko-saved-image-panel" id="uko-saved-image-panel" style="display:none;">
+                <p class="uko-saved-image-date" id="uko-saved-image-date"></p>
+                <img class="uko-saved-image-img" id="uko-saved-image-img" src="" alt="">
+              </div>
+            </div>
         </div>
     </header>
     <div class="container" id="grid">
@@ -198,5 +207,6 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://uko05.github.io/TopPage00/shared/sidebar.js"></script>
+  <script type="module" src="https://uko05.github.io/24_AccountCenter/account-status.js"></script>
 </body>
 </html>
