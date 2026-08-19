@@ -330,7 +330,9 @@ header {
     text-decoration: underline;
 }
 .uko-saved-image-img {
+    display: block;
     max-width: 100%;
+    margin: 0 auto;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 6px;
     cursor: pointer;
