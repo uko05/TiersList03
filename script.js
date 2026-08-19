@@ -21,11 +21,27 @@ function initSavedImageUI() {
   const panel = document.getElementById('uko-saved-image-panel');
   const dateEl = document.getElementById('uko-saved-image-date');
   const imgEl = document.getElementById('uko-saved-image-img');
+  const modal = document.getElementById('uko-saved-image-modal');
+  const modalImg = document.getElementById('uko-saved-image-modal-img');
+  const modalClose = document.getElementById('uko-saved-image-modal-close');
   if (!wrap || !toggle || !panel || !dateEl || !imgEl) return;
 
   toggle.addEventListener('click', () => {
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
   });
+
+  // サムネイルは元画像の30%サイズで表示する
+  imgEl.addEventListener('load', () => {
+    imgEl.style.width = `${imgEl.naturalWidth * 0.3}px`;
+  });
+  // クリックで原寸(100%)ポップアップ表示
+  imgEl.addEventListener('click', () => {
+    if (!modal || !modalImg) return;
+    modalImg.src = imgEl.src;
+    modal.style.display = 'flex';
+  });
+  modalClose?.addEventListener('click', () => { modal.style.display = 'none'; });
+  modal?.querySelector('.uko-saved-image-modal-backdrop')?.addEventListener('click', () => { modal.style.display = 'none'; });
 
   async function refresh() {
     const entry = await getSavedProfileImage(SITE_ID);
