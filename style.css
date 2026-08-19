@@ -320,6 +320,15 @@ header {
     font-size: 12px;
     color: #555;
 }
+.uko-saved-image-message {
+    margin: 0;
+    font-size: 12px;
+    color: #555;
+}
+.uko-saved-image-message a {
+    color: #d32f2f;
+    text-decoration: underline;
+}
 .uko-saved-image-img {
     max-width: 100%;
     border: 1px solid rgba(0, 0, 0, 0.15);
