@@ -3,13 +3,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAl9buAGGkoApCzmnJMcDPAe8DwaNZlwU8",
-  authDomain: "starrail-bakatare03.firebaseapp.com",
-  projectId: "starrail-bakatare03",
-  storageBucket: "starrail-bakatare03.firebasestorage.app",
-  messagingSenderId: "141456317482",
-  appId: "1:141456317482:web:206cde0b6acadc9759b753",
-  measurementId: "G-PFXCD9SQSG"
+  apiKey: "AIzaSyCP4QfMGDDBSI8VDERnESBOlHpUhy7wGPk",
+  authDomain: "genshin-bakatare01.firebaseapp.com",
+  projectId: "genshin-bakatare01",
+  storageBucket: "genshin-bakatare01.firebasestorage.app",
+  messagingSenderId: "658089418604",
+  appId: "1:658089418604:web:288c06b331da8c4f789d49"
 };
 
 export const app = initializeApp(firebaseConfig);

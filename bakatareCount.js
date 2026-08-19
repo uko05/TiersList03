@@ -7,7 +7,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 export async function incrementBakatareCount(filename) {
-  const ref = doc(db, "bakatareCounts", filename);
+  const ref = doc(db, "bakatareCounts03", filename);
 
   try {
     await runTransaction(db, async (tx) => {
