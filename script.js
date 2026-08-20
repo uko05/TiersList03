@@ -493,7 +493,7 @@ function saveImage() {
     navigator.maxTouchPoints > 0;
     
   html2canvas(grid, { useCORS: true, scale: 2 })
-    .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/png')))
+    .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92)))
     .then(async (blob) => {
       if (!blob) throw new Error('Blob 作成に失敗');
 
@@ -549,12 +549,12 @@ function saveImage() {
       const hh = String(now.getHours()).padStart(2, '0');
       const mi = String(now.getMinutes()).padStart(2, '0');
       const ss = String(now.getSeconds()).padStart(2, '0');
-      const filename = `スタレ推しキャラランキング_属性_${yyyy}${mm}${dd}_${hh}${mi}${ss}.png`;
+      const filename = `スタレ推しキャラランキング_属性_${yyyy}${mm}${dd}_${hh}${mi}${ss}.jpg`;
 
       // ---- モバイル優先ロジック ----
       if (isMobile) {
         try {
-          const file = new File([blob], filename, { type: 'image/png' });
+          const file = new File([blob], filename, { type: 'image/jpeg' });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
               files: [file],
