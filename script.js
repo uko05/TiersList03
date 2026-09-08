@@ -1,9 +1,26 @@
 import { incrementBakatareCount } from './bakatareCount.js';
+// firebaseConfig.jsを先に評価してデフォルトAppを確立してからsaved-image.jsをimportすること
+// (順序が逆だとログイン状態が正しく共有されない。saved-image.jsのコメント参照)。
+import { db } from './firebaseConfig.js';
+import { doc, runTransaction, increment } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import {
   onAccountAuthState, saveProfileImage, getSavedProfileImage, formatSavedAt,
 } from 'https://uko05.github.io/24_AccountCenter/saved-image.js';
 
 import { starrailChars } from 'https://cdn.jsdelivr.net/gh/uko05/99_SharedImage@main/02_Starrail/chara_data/starrail_chars.js';
+
+// ===== ユーザーID(uko05.github.io配下の全サイト共通のlocalStorageキー) =====
+const LS_USER_ID = 'genshinOmikuji_userId';
+function getSharedUserId() {
+  let id = localStorage.getItem(LS_USER_ID);
+  if (!id) {
+    const bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    id = 'u_' + Array.from(bytes).map((b) => b.toString(16).padStart(2, '0')).join('');
+    localStorage.setItem(LS_USER_ID, id);
+  }
+  return id;
+}
 
 const imageFolder = 'https://cdn.jsdelivr.net/gh/uko05/99_SharedImage@main/02_Starrail/chara_icon/';
 const imageData = starrailChars
@@ -13,6 +30,69 @@ const MAX_SELECTION = 3;
 const SELECTED_LABEL = '☑';
 const SITE_ID = 'starrailRankingElement';
 let refreshSavedImageUI = () => {};
+
+// ===== 「画像を1回生成する」ミッション(アカウント登録者限定・生涯1回・+20UP) =====
+const MISSION_CLAIM_KEY = 'starrailRankingElementImage';
+let missionLoggedInUser = null;
+onAccountAuthState((user) => {
+  missionLoggedInUser = user;
+  if (user) claimImageGenerationMissionIfAlreadySaved();
+});
+
+function showMissionToast(text) {
+  let toast = document.getElementById('uko-mission-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'uko-mission-toast';
+    toast.className = 'uko-mission-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = text;
+  toast.classList.remove('show');
+  void toast.offsetWidth; // reflow
+  toast.classList.add('show');
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+async function claimMissionOnce() {
+  const userId = getSharedUserId();
+  const ref = doc(db, 'omikujiUsers', userId);
+  try {
+    const claimed = await runTransaction(db, async (tx) => {
+      const snap = await tx.get(ref);
+      const data = snap.exists() ? snap.data() : {};
+      if (data.missionsClaimed?.[MISSION_CLAIM_KEY]) return false;
+      tx.set(ref, {
+        ukoPoints: increment(20),
+        missionsClaimed: { [MISSION_CLAIM_KEY]: true },
+      }, { merge: true });
+      return true;
+    });
+    if (claimed) {
+      const lang = savedImageLang();
+      showMissionToast(lang === 'en' ? 'Mission complete! +20 UP' : 'ミッション達成！ +20UP');
+    }
+  } catch (e) {
+    console.error('[mission] claim failed', e);
+  }
+}
+
+// 画像生成が成功した時に呼ぶ。未ログインなら静かに何もしない。
+function claimImageGenerationMission() {
+  if (!missionLoggedInUser) return;
+  claimMissionOnce();
+}
+
+// 既にログイン前から画像を保存済みだった人を、ログイン検知時に遡って達成扱いにする
+async function claimImageGenerationMissionIfAlreadySaved() {
+  try {
+    const entry = await getSavedProfileImage(SITE_ID);
+    if (entry) await claimMissionOnce();
+  } catch (e) {
+    console.error('[mission] backfill check failed', e);
+  }
+}
 
 function savedImageLang() {
   return document.querySelector('input[name="lang"]:checked')?.value || localStorage.getItem('lang') || 'ja';
@@ -499,6 +579,7 @@ function saveImage() {
 
       // アカウント登録者ならクラウドにも保存(失敗しても無視、ローカル保存は継続)
       saveProfileImage(SITE_ID, blob).then(() => refreshSavedImageUI());
+      claimImageGenerationMission();
 
       // ✅ ばかたれモードで保存した時だけ集計 & 連打対策
       const modeC = document.getElementById('modeC');
