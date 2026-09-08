@@ -36,7 +36,7 @@ const MISSION_CLAIM_KEY = 'starrailRankingElementImage';
 let missionLoggedInUser = null;
 onAccountAuthState((user) => {
   missionLoggedInUser = user;
-  if (user) claimImageGenerationMissionIfAlreadySaved();
+  if (user) markImageGenerationMissionAchievedIfAlreadySaved();
 });
 
 function showMissionToast(text) {
@@ -55,40 +55,40 @@ function showMissionToast(text) {
   toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 3200);
 }
 
-async function claimMissionOnce() {
+async function markMissionAchievedOnce() {
   const userId = getSharedUserId();
   const ref = doc(db, 'omikujiUsers', userId);
   try {
-    const claimed = await runTransaction(db, async (tx) => {
+    const achieved = await runTransaction(db, async (tx) => {
       const snap = await tx.get(ref);
       const data = snap.exists() ? snap.data() : {};
-      if (data.missionsClaimed?.[MISSION_CLAIM_KEY]) return false;
+      // 既に達成フラグ済み、または(旧仕様の名残で)受け取り済みなら何もしない
+      if (data.missionsAchieved?.[MISSION_CLAIM_KEY] || data.missionsClaimed?.[MISSION_CLAIM_KEY]) return false;
       tx.set(ref, {
-        ukoPoints: increment(20),
-        missionsClaimed: { [MISSION_CLAIM_KEY]: true },
+        missionsAchieved: { [MISSION_CLAIM_KEY]: true },
       }, { merge: true });
       return true;
     });
-    if (claimed) {
+    if (achieved) {
       const lang = savedImageLang();
-      showMissionToast(lang === 'en' ? 'Mission complete! +20 UP' : 'ミッション達成！ +20UP');
+      showMissionToast(lang === 'en' ? 'Mission complete! Claim it on the UPoint page.' : 'ミッション達成！うーこポイント交換所で受け取ろう');
     }
   } catch (e) {
-    console.error('[mission] claim failed', e);
+    console.error('[mission] mark achieved failed', e);
   }
 }
 
 // 画像生成が成功した時に呼ぶ。未ログインなら静かに何もしない。
-function claimImageGenerationMission() {
+function markImageGenerationMissionAchieved() {
   if (!missionLoggedInUser) return;
-  claimMissionOnce();
+  markMissionAchievedOnce();
 }
 
 // 既にログイン前から画像を保存済みだった人を、ログイン検知時に遡って達成扱いにする
-async function claimImageGenerationMissionIfAlreadySaved() {
+async function markImageGenerationMissionAchievedIfAlreadySaved() {
   try {
     const entry = await getSavedProfileImage(SITE_ID);
-    if (entry) await claimMissionOnce();
+    if (entry) await markMissionAchievedOnce();
   } catch (e) {
     console.error('[mission] backfill check failed', e);
   }
@@ -579,7 +579,7 @@ function saveImage() {
 
       // アカウント登録者ならクラウドにも保存(失敗しても無視、ローカル保存は継続)
       saveProfileImage(SITE_ID, blob).then(() => refreshSavedImageUI());
-      claimImageGenerationMission();
+      markImageGenerationMissionAchieved();
 
       // ✅ ばかたれモードで保存した時だけ集計 & 連打対策
       const modeC = document.getElementById('modeC');
