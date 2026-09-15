@@ -572,7 +572,9 @@ function saveImage() {
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
     navigator.maxTouchPoints > 0;
     
-  html2canvas(grid, { useCORS: true, scale: 2 })
+  // スマホの縦画面だとgridの実際の横幅(PC想定の固定幅)よりビューポートが狭いため、
+  // windowWidthを指定しないとhtml2canvasが右側を切り落として撮ってしまう。
+  html2canvas(grid, { useCORS: true, scale: 2, windowWidth: grid.scrollWidth, windowHeight: grid.scrollHeight })
     .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92)))
     .then(async (blob) => {
       if (!blob) throw new Error('Blob 作成に失敗');
