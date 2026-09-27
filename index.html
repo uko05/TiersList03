@@ -272,10 +272,32 @@
   .uko-about li{margin:2px 0;list-style:revert}
   .uko-about dt{font-weight:bold;margin-top:6px}
   .uko-about dd{margin:0 0 4px 1em}
+  .uko-about [hidden]{display:none!important}
   </style>
   <details class="uko-about">
-    <summary>このサイトについて</summary>
-    <div class="uko-about-body"><h2>スタレ推しキャラランキングとは</h2><p>崩壊：スターレイルのキャラクターを好きな順に並べて、推しキャラランキングやTier表を作れる無料ツールです。属性（炎・氷・量子・虚数など）ごとに並べられます。完成した表は画像として保存して、X（Twitter）などでシェアできます。</p><h2>使い方</h2><ol><li>属性別のタブからキャラを選び、ランクの段に並べます。</li><li>並べ終わったら「Save Image」で画像を保存します。</li><li>保存した画像をSNSでシェアして、推しをみんなに布教しましょう。</li></ol><h2>よくある質問</h2><dl><dt>Q. スマホでも使える？</dt><dd>A. 使えます。横画面にすると操作しやすくなります。</dd><dt>Q. 前に作った画像を見たい</dt><dd>A. 「前回保存した画像を確認」から見られます。</dd><dt>Q. ばかたれモードとは？</dt><dd>A. 全てのマスに同じキャラを表示する、愛が強い人向けのモードです。</dd></dl></div>
+    <summary><span data-uko-lang="ja">このサイトについて</span><span data-uko-lang="en" hidden>About this site</span></summary>
+    <div class="uko-about-body" data-uko-lang="ja"><h2>スタレ推しキャラランキングとは</h2><p>崩壊：スターレイルのキャラクターを好きな順に並べて、推しキャラランキングやTier表を作れる無料ツールです。属性（炎・氷・量子・虚数など）ごとに並べられます。完成した表は画像として保存して、X（Twitter）などでシェアできます。</p><h2>使い方</h2><ol><li>属性別のタブからキャラを選び、ランクの段に並べます。</li><li>並べ終わったら「Save Image」で画像を保存します。</li><li>保存した画像をSNSでシェアして、推しをみんなに布教しましょう。</li></ol><h2>よくある質問</h2><dl><dt>Q. スマホでも使える？</dt><dd>A. 使えます。横画面にすると操作しやすくなります。</dd><dt>Q. 前に作った画像を見たい</dt><dd>A. 「前回保存した画像を確認」から見られます。</dd><dt>Q. ばかたれモードとは？</dt><dd>A. 全てのマスに同じキャラを表示する、愛が強い人向けのモードです。</dd></dl></div>
+    <div class="uko-about-body" data-uko-lang="en" lang="en" hidden><h2>What is Star Rail Oshi Character Ranking?</h2><p>A free tool for ranking your favorite Honkai: Star Rail characters and making tier lists. You can sort them by combat type (Fire, Ice, Quantum, Imaginary, etc.). Save the finished list as an image and share it on X (Twitter) and other social media.</p><h2>How to use</h2><ol><li>Pick characters from the Type tabs and place them in the rank rows.</li><li>When you are done, press "Save Image" to save it as an image.</li><li>Share the image on social media and spread the love for your favorites!</li></ol><h2>FAQ</h2><dl><dt>Q. Does it work on smartphones?</dt><dd>A. Yes. Landscape mode makes it easier to use.</dd><dt>Q. I want to see an image I made before</dt><dd>A. Use "Check last saved image".</dd><dt>Q. What is Bakatare Mode?</dt><dd>A. A mode that shows the same character in every slot, for people with a lot of love for one character.</dd></dl></div>
   </details>
+  <script>
+  (function(){
+    // 説明文の日英切り替え。言語ラジオがあるサイトはその選択、ないサイトは共通のlocalStorage('lang')に合わせる
+    var box=document.currentScript.previousElementSibling;
+    function cur(){
+      var r=document.querySelector('input[name="lang"]:checked');
+      if(r) return r.value==='en'?'en':'ja';
+      try{return localStorage.getItem('lang')==='en'?'en':'ja';}catch(e){return 'ja';}
+    }
+    function apply(){
+      var l=cur();
+      box.querySelectorAll('[data-uko-lang]').forEach(function(n){n.hidden=n.getAttribute('data-uko-lang')!==l;});
+    }
+    apply();
+    document.addEventListener('change',function(e){if(e.target&&e.target.name==='lang')setTimeout(apply,0);});
+    document.addEventListener('DOMContentLoaded',apply);
+    window.addEventListener('load',apply);
+    new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+  })();
+  </script>
 </body>
 </html>
