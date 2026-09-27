@@ -256,5 +256,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://uko05.github.io/TopPage00/shared/sidebar.js"></script>
   <script type="module" src="https://uko05.github.io/24_AccountCenter/account-status.js"></script>
+  <!-- サイト説明(検索向け)。画像保存の範囲外に置くこと -->
+  <style>
+  .uko-about{max-width:760px;margin:32px auto 24px;padding:0 16px;box-sizing:border-box;text-align:left;font-size:14px;line-height:1.75;color:inherit;-webkit-user-select:text;user-select:text}
+  .uko-about>summary{cursor:pointer;list-style:none;display:inline-block;padding:6px 14px;border:1px solid rgba(128,128,128,.35);border-radius:999px;font-size:13px;opacity:.75}
+  .uko-about>summary:hover{opacity:1}
+  .uko-about>summary::-webkit-details-marker{display:none}
+  .uko-about>summary::before{content:"▶ "}
+  .uko-about[open]>summary::before{content:"▼ "}
+  .uko-about-body{margin-top:12px;padding:16px 20px;border:1px solid rgba(128,128,128,.25);border-radius:12px;background:rgba(128,128,128,.06)}
+  .uko-about h2{font-size:15px;font-weight:bold;margin:14px 0 6px;padding:0;border:0;background:none;color:inherit;text-align:left}
+  .uko-about h2:first-child{margin-top:0}
+  .uko-about p,.uko-about dl{margin:0 0 8px}
+  .uko-about ul,.uko-about ol{margin:0 0 8px;padding-left:1.5em}
+  .uko-about li{margin:2px 0;list-style:revert}
+  .uko-about dt{font-weight:bold;margin-top:6px}
+  .uko-about dd{margin:0 0 4px 1em}
+  </style>
+  <details class="uko-about">
+    <summary>このサイトについて</summary>
+    <div class="uko-about-body"><h2>スタレ推しキャラランキングとは</h2><p>崩壊：スターレイルのキャラクターを好きな順に並べて、推しキャラランキングやTier表を作れる無料ツールです。属性（炎・氷・量子・虚数など）ごとに並べられます。完成した表は画像として保存して、X（Twitter）などでシェアできます。</p><h2>使い方</h2><ol><li>属性別のタブからキャラを選び、ランクの段に並べます。</li><li>並べ終わったら「Save Image」で画像を保存します。</li><li>保存した画像をSNSでシェアして、推しをみんなに布教しましょう。</li></ol><h2>よくある質問</h2><dl><dt>Q. スマホでも使える？</dt><dd>A. 使えます。横画面にすると操作しやすくなります。</dd><dt>Q. 前に作った画像を見たい</dt><dd>A. 「前回保存した画像を確認」から見られます。</dd><dt>Q. ばかたれモードとは？</dt><dd>A. 全てのマスに同じキャラを表示する、愛が強い人向けのモードです。</dd></dl></div>
+  </details>
 </body>
 </html>
