@@ -587,7 +587,8 @@ function saveImage() {
   ));
   html2canvas(grid, {
     useCORS: true, scale: 2,
-    windowWidth: fullWidth + 40, windowHeight: grid.scrollHeight + 40,
+    // 撮影用の画面幅が今の画面より狭いとスマホ用の見た目(左右の余白が違う)に切り替わるため、今の画面幅より狭くしない
+    windowWidth: Math.max(fullWidth + 40, document.documentElement.clientWidth), windowHeight: grid.scrollHeight + 40,
     onclone: (doc) => {
       const g = doc.getElementById('grid');
       if (!g) return;
@@ -597,6 +598,11 @@ function saveImage() {
       g.style.overflow = 'visible';
       g.style.marginLeft = '0';
       g.style.marginRight = '0';
+      // 左右の余白は今の見た目のまま固定する
+      g.style.paddingLeft = gcs.paddingLeft;
+      g.style.paddingRight = gcs.paddingRight;
+      g.style.justifyContent = gcs.justifyContent;
+      g.style.gridTemplateColumns = gcs.gridTemplateColumns;
     }
   })
     .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92)))
