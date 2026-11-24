@@ -300,5 +300,7 @@
     new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
   })();
   </script>
+<!-- 右下のバージョン表示(更新が反映されたかの確認用) -->
+<span id="site-version" class="site-version" style="position:fixed;right:8px;bottom:calc(6px + env(safe-area-inset-bottom, 0px));font-size:11px;color:rgba(0,0,0,0.2);pointer-events:none;z-index:901;">v1.01</span>
 </body>
 </html>
