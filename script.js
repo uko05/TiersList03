@@ -574,7 +574,31 @@ function saveImage() {
     
   // スマホの縦画面だとgridの実際の横幅(PC想定の固定幅)よりビューポートが狭いため、
   // windowWidthを指定しないとhtml2canvasが右側を切り落として撮ってしまう。
-  html2canvas(grid, { useCORS: true, scale: 2, windowWidth: grid.scrollWidth, windowHeight: grid.scrollHeight })
+  // 表の本来の横幅(全列+左右の余白)を計算し、撮影用の複製ではその幅に固定する。
+  // スマホでは表が画面より広く、端末によってはscrollWidthが右の余白を含まないため、
+  // 右端(最後の列の一部と余白)が切れて保存されることがあった。
+  const gcs = getComputedStyle(grid);
+  const px = v => parseFloat(v) || 0;
+  const colsWidth = gcs.gridTemplateColumns.split(' ').reduce((sum, v) => sum + px(v), 0)
+    + px(gcs.columnGap) * Math.max(0, gcs.gridTemplateColumns.split(' ').length - 1);
+  const fullWidth = Math.ceil(Math.max(
+    grid.scrollWidth,
+    colsWidth + px(gcs.paddingLeft) + px(gcs.paddingRight) + px(gcs.borderLeftWidth) + px(gcs.borderRightWidth)
+  ));
+  html2canvas(grid, {
+    useCORS: true, scale: 2,
+    windowWidth: fullWidth + 40, windowHeight: grid.scrollHeight + 40,
+    onclone: (doc) => {
+      const g = doc.getElementById('grid');
+      if (!g) return;
+      g.style.boxSizing = 'border-box';
+      g.style.width = fullWidth + 'px';
+      g.style.maxWidth = 'none';
+      g.style.overflow = 'visible';
+      g.style.marginLeft = '0';
+      g.style.marginRight = '0';
+    }
+  })
     .then(canvas => new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92)))
     .then(async (blob) => {
       if (!blob) throw new Error('Blob 作成に失敗');
